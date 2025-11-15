@@ -1,4 +1,6 @@
 from tkinter import Frame, Label, font, Button
+from tkinter import messagebox
+import sys
 
 class MenuPage(Frame):
     def __init__(self, parent, controller):
@@ -15,9 +17,20 @@ class MenuPage(Frame):
         
         menus = {
             "デバイス一覧": lambda: self.controller.show_frame("DeviceListPage"),
-            "デバイス情報": lambda: None
+            "デバイス情報": lambda: None,
+            "システム終了": self.terminate_system
         }
         
         for menu_name, command_func in menus.items():
             button = Button(menu_frame, text=menu_name, font=("MSゴシック", "20", " "), width=30, command=command_func)
             button.pack(pady=10)
+    
+    
+    def terminate_system(self):
+        confirm = messagebox.askyesno(
+            "終了の確認", 
+            "本当にアプリケーションを終了しますか？"
+        )
+        if confirm:
+            self.master.quit()
+            sys.exit()
