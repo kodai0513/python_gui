@@ -166,8 +166,7 @@ class SetupDevicePage(Frame):
                 messagebox.showerror("エラー", error_message)
                 return
                 
-            db = firestore.client()
-            target_collection_ref = db.collection("setup").document(AppData.APP_UUID).collection("devices")
+            target_collection_ref = firestore.client().collection("setup").document(AppData.APP_UUID).collection("devices")
             
             target_collection_ref.add(firestore_data)
             messagebox.showinfo("成功", "デバイス設定が正常に登録されました。")
@@ -179,12 +178,8 @@ class SetupDevicePage(Frame):
     def get_edit_data(self):
         if not self.device_id:
             return
-
         try:
-            db = firestore.client()
-            doc_ref = db.collection("setup").document(AppData.APP_UUID).collection("devices").document(self.device_id)
-            doc = doc_ref.get()
-            
+            doc = firestore.client().collection("setup").document(AppData.APP_UUID).collection("devices").document("hdJ0ypPERnG0umxgk2Jn").get()
             if doc.exists:
                 firestore_data = doc.to_dict()
                 initial_data = {
@@ -197,6 +192,8 @@ class SetupDevicePage(Frame):
                 }
 
                 for key, value in initial_data.items():
+                    if value is None:
+                            value = ""
                     if key in self.entries:
                         self.entries[key].delete(0, 'end')
                         self.entries[key].insert(0, value)

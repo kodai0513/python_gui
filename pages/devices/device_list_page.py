@@ -122,4 +122,4 @@ class DeviceListPage(Frame):
             messagebox.showwarning("警告", "編集するデバイスを選択してください。")
             return
 
-        self.controller.show_frame("SetupDevicePage", args={'id': selected_item_id})
+        self.controller.show_frame("SetupDevicePage", args={'id': selected_item_id[0]})
