@@ -8,10 +8,12 @@ from utils.esp32_file_transfer import Esp32FileTransfer
 import json
 
 class SetupDevicePage(Frame):
-    def __init__(self, parent, controller):
+    def __init__(self, parent, controller, **args):
         super().__init__(parent)
         self.controller = controller
+        self.device_id = args.get('id')
         self.set_ui()
+        self.get_edit_data()
         
     def set_ui(self):
         label = Label(self, text="デバイスセットアップ", font=("Arial", 20))
@@ -173,3 +175,35 @@ class SetupDevicePage(Frame):
             
         except Exception as e:
             messagebox.showerror("エラー", f"エラーが発生しました: {e}")
+    
+    def get_edit_data(self):
+        if not self.device_id:
+            return
+
+        try:
+            db = firestore.client()
+            doc_ref = db.collection("setup").document(AppData.APP_UUID).collection("devices").document(self.device_id)
+            doc = doc_ref.get()
+            
+            if doc.exists:
+                firestore_data = doc.to_dict()
+                initial_data = {
+                    "device_name": firestore_data.get("name", ""),
+                    "ssid": firestore_data.get("ssid", ""),
+                    "password": firestore_data.get("password", ""),
+                    "ip_address": firestore_data.get("ip", ""),
+                    "gateway": firestore_data.get("gateway", ""),
+                    "subnet": firestore_data.get("subnet", ""),
+                }
+
+                for key, value in initial_data.items():
+                    if key in self.entries:
+                        self.entries[key].delete(0, 'end')
+                        self.entries[key].insert(0, value)
+            else:
+                messagebox.showwarning("警告", "指定されたデバイスIDのデータが見つかりませんでした。新規作成モードで開きます。")
+                self.device_id = None
+                
+        except Exception as e:
+            messagebox.showerror("エラー", f"デバイスデータの取得中にエラーが発生しました: {e}")
+            self.device_id = None

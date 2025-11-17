@@ -10,6 +10,7 @@ from firebase_admin import credentials
 import uuid
 from pathlib import Path
 from app_data import AppData
+import inspect
 
 
 class Main(Tk):
@@ -46,7 +47,7 @@ class Main(Tk):
         
         self.show_frame("MenuPage")
     
-    def show_frame(self, page_name):
+    def show_frame(self, page_name, args=None):
         
         if self.current_frame is not None:
             self.current_frame.destroy()
@@ -55,14 +56,25 @@ class Main(Tk):
         
         if page_class is None:
             return
-
-        new_frame = page_class(self.container, self)
         
+        try:
+            signature = inspect.signature(page_class.__init__)
+            
+            accepts_kwargs = any(p.kind == inspect.Parameter.VAR_KEYWORD for p in signature.parameters.values())
+
+            if args and accepts_kwargs:
+                new_frame = page_class(self.container, self, **args)
+            else:
+                new_frame = page_class(self.container, self)
+
+        except ValueError:
+            new_frame = page_class(self.container, self)
+    
         new_frame.grid(row=0, column=0, sticky="nsew")
         new_frame.tkraise()
         
         self.current_frame = new_frame
-        
+            
     def init_firebase(self, firebase_admin_sdk_path):
         try:
             cred = credentials.Certificate(firebase_admin_sdk_path)

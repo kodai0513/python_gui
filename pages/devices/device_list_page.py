@@ -122,11 +122,4 @@ class DeviceListPage(Frame):
             messagebox.showwarning("警告", "編集するデバイスを選択してください。")
             return
 
-        selected_values = self.device_tree.item(selected_item_id, 'values')
-        device_data = {
-            "ID": selected_values[0],
-            "IP": selected_values[1],
-            "Gateway": selected_values[2],
-        }
-
-        self.controller.show_frame("SetupDevicePage", data=device_data)
+        self.controller.show_frame("SetupDevicePage", args={'id': selected_item_id})
