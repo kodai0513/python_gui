@@ -143,12 +143,6 @@ class SetupDevicePage(Frame):
         }
 
         try:
-            error_message = Esp32FileTransfer.image_create_and_upload(
-                data_folder=AppData.DATA_FOLDER,
-                mklittlefs_path=AppData.MKLITTLEFS_PATH,
-                output_image=AppData.OUTPUT_IMAGE
-            )
-            
             setting_data = {
                 "ssid": setup_data["ssid"],
                 "password": setup_data["password"],
@@ -159,6 +153,12 @@ class SetupDevicePage(Frame):
             
             with open(f"{AppData.DATA_FOLDER}/setting.json", 'w', encoding='utf-8') as f:
                 json.dump(setting_data, f)
+                
+            error_message = Esp32FileTransfer.image_create_and_upload(
+                data_folder=AppData.DATA_FOLDER,
+                mklittlefs_path=AppData.MKLITTLEFS_PATH,
+                output_image=AppData.OUTPUT_IMAGE
+            )
             
             if error_message is not None:
                 messagebox.showerror("エラー", error_message)
@@ -171,4 +171,4 @@ class SetupDevicePage(Frame):
             self.controller.show_frame("DeviceListPage")
             
         except Exception as e:
-            messagebox.showerror("エラー", f"Firestoreへの設定登録中にエラーが発生しました: {e}")
+            messagebox.showerror("エラー", f"エラーが発生しました: {e}")
