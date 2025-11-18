@@ -181,7 +181,8 @@ class SetupDevicePage(Frame):
         if not self.device_id:
             return
         try:
-            doc = firestore.client().collection("setup").document(AppData.APP_UUID).collection("devices").document("hdJ0ypPERnG0umxgk2Jn").get()
+            
+            doc = firestore.client().collection("setup").document(AppData.APP_UUID).collection("devices").document(self.device_id).get()
             if doc.exists:
                 firestore_data = doc.to_dict()
                 initial_data = {
