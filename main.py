@@ -11,7 +11,7 @@ import uuid
 from pathlib import Path
 from app_data import AppData
 import inspect
-
+import sys
 
 class Main(Tk):
     UUID_FILE_NAME = "app_uuid.txt"
@@ -87,8 +87,7 @@ class Main(Tk):
             self.destroy()
     
     def init_setup_uuid(self):
-        uuid_file_path = Path(__file__).resolve().parent / self.UUID_FILE_NAME
-        
+        uuid_file_path = self.get_executable_dir() / self.UUID_FILE_NAME        
         if uuid_file_path.exists():
             try:
                 with open(uuid_file_path, 'r') as f:
@@ -107,6 +106,12 @@ class Main(Tk):
             messagebox.showerror("エラー", f"UUIDファイルの書き込みエラー: {e}")
         
         return new_uuid
+
+    def get_executable_dir(self):
+        if getattr(sys, 'frozen', False):
+            return Path(sys.executable).parent
+        else:
+            return Path(__file__).resolve().parent
         
 if __name__ == "__main__":
     app = Main()
