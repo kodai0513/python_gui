@@ -44,7 +44,7 @@ class SetupDevicePage(Frame):
         auto_assign_button = Button(
             form_frame,
             text="ネットワーク情報自動割り当て",
-            font=("MSゴシック", "20", " "),
+            font=("MSゴシック", "13", " "),
             width=20,
             command=self.auto_assign_network_config
         )
